@@ -32,8 +32,6 @@ public class SortingApp extends JFrame {
         columnSelector = new JComboBox<>(); // Empty for now, filled after upload
         columnSelector.addItem("Select Column...");
 
-
-
         sortButton = new JButton("Run Sort & Evaluate");
 
         // Add components to Top Panel
@@ -68,32 +66,70 @@ public class SortingApp extends JFrame {
         });
     }
 
+    // Stores the currently loaded file
+    private File currentFile;
+
     private void handleFileUpload() {
         JFileChooser fileChooser = new JFileChooser();
         int option = fileChooser.showOpenDialog(this);
         if (option == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
-            statusLabel.setText("Loaded: " + file.getName());
-            resultArea.append("File selected: " + file.getAbsolutePath() + "\n");
+            currentFile = fileChooser.getSelectedFile();
+            statusLabel.setText("Loaded: " + currentFile.getName());
+            resultArea.append("File loaded: " + currentFile.getName() + "\n");
 
-            // TODO: Call CSVReader class here to parse data
+            // Use Member 1's code to get headers
+            String[] headers = CSVReader.getHeaders(currentFile);
+
+            // Clear and refill the dropdown
+            columnSelector.removeAllItems();
+            for (String header : headers) {
+                columnSelector.addItem(header);
+            }
+            resultArea.append("Columns detected: " + headers.length + "\n");
         }
     }
 
     private void handleSorting() {
-        resultArea.append("Running Test UI" + "...\n");
+        // Validation: Check if file exists and column is selected
+        if (currentFile == null || columnSelector.getSelectedIndex() < 0) {
+            JOptionPane.showMessageDialog(this, "Please upload a file and select a column first!");
+            return;
+        }
+
+//        String selectedAlgo = (String) algoSelector.getSelectedItem();
+        int colIndex = columnSelector.getSelectedIndex();
+
+        // 1. Get Data (Using Member 1's Code)
+        resultArea.append("Reading data...\n");
+        double[] data = CSVReader.getColumnData(currentFile, colIndex);
+
+        if (data.length == 0) {
+            resultArea.append("Error: No valid numbers found in this column.\n");
+            return;
+        }
+
+        String bestAlgoName;
+        long bestAlgoDuration;
 
         long startTime = System.nanoTime();
-
-        // TODO: Call Sorters class methods here based on selection
-
+        Sorters.insertionSort(data);
         long endTime = System.nanoTime();
         long duration = (endTime - startTime);
-
-        resultArea.append("Finished in: " + duration + " nanoseconds\n");
+        bestAlgoName = "Insertion Sort";
+        bestAlgoDuration = duration;
+        resultArea.append("Sorting " + data.length + " rows using Insertion Sort" + "...\n");
+        resultArea.append("Done! Execution Time: " + duration + " ns (" + (duration / 1_000_000.0) + " ms)\n");
         resultArea.append("---------------------------\n");
-    }
 
+        resultArea.append("---------------------------\n");
+        resultArea.append("---------------------------\n");
+        resultArea.append("The Best Sorting Algo:"+bestAlgoName+" Execution Time: " + bestAlgoDuration + " ns (" + (bestAlgoDuration / 1_000_000.0) + " ms)\n");
+        resultArea.append("---------------------------\n");
+        resultArea.append("---------------------------\n");
+
+
+
+    }
 
 
     public static void main(String[] args) {
