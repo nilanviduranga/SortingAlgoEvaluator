@@ -54,4 +54,58 @@ public class Sorters {
         while (i < left.length) arr[k++] = left[i++];
         while (j < right.length) arr[k++] = right[j++];
     }
+    // 4. Quick Sort
+    public static void quickSort(double[] arr, int low, int high) {
+        if (low < high) {
+            int pi = partition(arr, low, high);
+            quickSort(arr, low, pi - 1);
+            quickSort(arr, pi + 1, high);
+        }
+    }
+
+    private static int partition(double[] arr, int low, int high) {
+        double pivot = arr[high];
+        int i = (low - 1);
+        for (int j = low; j < high; j++) {
+            if (arr[j] < pivot) {
+                i++;
+                double temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+        double temp = arr[i + 1];
+        arr[i + 1] = arr[high];
+        arr[high] = temp;
+        return i + 1;
+    }
+
+    // 5. Heap Sort
+    public static void heapSort(double[] arr) {
+        int n = arr.length;
+        for (int i = n / 2 - 1; i >= 0; i--)
+            heapify(arr, n, i);
+        for (int i = n - 1; i > 0; i--) {
+            double temp = arr[0];
+            arr[0] = arr[i];
+            arr[i] = temp;
+            heapify(arr, i, 0);
+        }
+    }
+
+    private static void heapify(double[] arr, int n, int i) {
+        int largest = i;
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+
+        if (left < n && arr[left] > arr[largest]) largest = left;
+        if (right < n && arr[right] > arr[largest]) largest = right;
+
+        if (largest != i) {
+            double swap = arr[i];
+            arr[i] = arr[largest];
+            arr[largest] = swap;
+            heapify(arr, n, largest);
+        }
+    }
 }
