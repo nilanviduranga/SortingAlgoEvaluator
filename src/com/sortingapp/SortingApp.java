@@ -145,6 +145,30 @@ public class SortingApp extends JFrame {
         resultArea.append("Done! Execution Time: " + duration + " ns (" + (duration / 1_000_000.0) + " ms)\n");
         resultArea.append("---------------------------\n");
 
+        startTime = System.nanoTime();
+        Sorters.shellSort(data);
+        endTime = System.nanoTime();
+        duration = (endTime - startTime);
+        if (duration < bestAlgoDuration) {
+            bestAlgoName = "Shell Sort";
+            bestAlgoDuration = duration;
+        }
+        resultArea.append("Sorting " + data.length + " rows using Shell Sort" + "...\n");
+        resultArea.append("Done! Execution Time: " + duration + " ns (" + (duration / 1_000_000.0) + " ms)\n");
+        resultArea.append("---------------------------\n");
+
+        startTime = System.nanoTime();
+        Sorters.mergeSort(data);
+        endTime = System.nanoTime();
+        duration = (endTime - startTime);
+        if (duration < bestAlgoDuration) {
+            bestAlgoName = "Merge Sort";
+            bestAlgoDuration = duration;
+        }
+        resultArea.append("Sorting " + data.length + " rows using Merge Sort" + "...\n");
+        resultArea.append("Done! Execution Time: " + duration + " ns (" + (duration / 1_000_000.0) + " ms)\n");
+        resultArea.append("---------------------------\n");
+
         resultArea.append("---------------------------\n");
         resultArea.append("---------------------------\n");
         resultArea.append("The Best Sorting Algo:"+bestAlgoName+" Execution Time: " + bestAlgoDuration + " ns (" + (bestAlgoDuration / 1_000_000.0) + " ms)\n");
