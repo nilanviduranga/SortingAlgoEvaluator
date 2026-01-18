@@ -6,6 +6,8 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.io.File;
 import java.util.Arrays;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class SortingApp extends JFrame {
     // GUI Components
@@ -119,23 +121,49 @@ public class SortingApp extends JFrame {
 
     private void handleFileUpload() {
         JFileChooser fileChooser = new JFileChooser();
+
+        // 1. Set the visual filter (UI Restriction)
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV Files (*.csv)", "csv");
+        fileChooser.setFileFilter(filter);
+        fileChooser.setAcceptAllFileFilterUsed(false); // Optional: Hide "All Files"
+
         int option = fileChooser.showOpenDialog(this);
+
         if (option == JFileChooser.APPROVE_OPTION) {
-            currentFile = fileChooser.getSelectedFile();
+            File selectedFile = fileChooser.getSelectedFile();
+
+            // 2. Logic Check: Validate the extension
+            // We convert to lower case to handle "Data.CSV" and "data.csv" equally
+            if (!selectedFile.getName().toLowerCase().endsWith(".csv")) {
+                JOptionPane.showMessageDialog(this,
+                        "Invalid file format. Please select a .csv file.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return; // STOP execution here
+            }
+
+            // If validation passes, assign to currentFile and proceed
+            currentFile = selectedFile;
 
             fileLabel.setText(" " + currentFile.getName());
-            fileLabel.setBackground(new Color(220, 255, 220)); // Light Green
+            fileLabel.setBackground(new Color(220, 255, 220));
             statusLabel.setText("Loaded: " + currentFile.getAbsolutePath());
 
-            resultArea.setText(""); // Clear previous results
+            resultArea.setText("");
             resultArea.append(">> FILE LOADED: " + currentFile.getName() + "\n");
 
+            // Assuming CSVReader handles exceptions internally, otherwise wrap this in try/catch
             String[] headers = CSVReader.getHeaders(currentFile);
+
             columnSelector.removeAllItems();
-            for (String header : headers) {
-                columnSelector.addItem(header);
+            if (headers != null) {
+                for (String header : headers) {
+                    columnSelector.addItem(header);
+                }
+                resultArea.append(">> COLUMNS DETECTED: " + headers.length + "\n");
+            } else {
+                resultArea.append(">> ERROR: Could not read CSV headers.\n");
             }
-            resultArea.append(">> COLUMNS DETECTED: " + headers.length + "\n");
         }
     }
 
@@ -170,7 +198,10 @@ public class SortingApp extends JFrame {
         endTime = System.nanoTime();
         duration = (endTime - startTime);
         logResult("Insertion Sort", duration);
-        if (duration < bestAlgoDuration) { bestAlgoDuration = duration; bestAlgoName = "Insertion Sort"; }
+        if (duration < bestAlgoDuration) {
+            bestAlgoDuration = duration;
+            bestAlgoName = "Insertion Sort";
+        }
 
         // --- 2. Shell Sort ---
         testData = originalData.clone();
@@ -179,7 +210,10 @@ public class SortingApp extends JFrame {
         endTime = System.nanoTime();
         duration = (endTime - startTime);
         logResult("Shell Sort", duration);
-        if (duration < bestAlgoDuration) { bestAlgoDuration = duration; bestAlgoName = "Shell Sort"; }
+        if (duration < bestAlgoDuration) {
+            bestAlgoDuration = duration;
+            bestAlgoName = "Shell Sort";
+        }
 
         // --- 3. Merge Sort ---
         testData = originalData.clone();
@@ -188,7 +222,10 @@ public class SortingApp extends JFrame {
         endTime = System.nanoTime();
         duration = (endTime - startTime);
         logResult("Merge Sort", duration);
-        if (duration < bestAlgoDuration) { bestAlgoDuration = duration; bestAlgoName = "Merge Sort"; }
+        if (duration < bestAlgoDuration) {
+            bestAlgoDuration = duration;
+            bestAlgoName = "Merge Sort";
+        }
 
         // --- 4. Quick Sort ---
         testData = originalData.clone();
@@ -198,7 +235,10 @@ public class SortingApp extends JFrame {
         endTime = System.nanoTime();
         duration = (endTime - startTime);
         logResult("Quick Sort", duration);
-        if (duration < bestAlgoDuration) { bestAlgoDuration = duration; bestAlgoName = "Quick Sort"; }
+        if (duration < bestAlgoDuration) {
+            bestAlgoDuration = duration;
+            bestAlgoName = "Quick Sort";
+        }
 
         // --- 5. Heap Sort ---
         testData = originalData.clone();
@@ -207,7 +247,10 @@ public class SortingApp extends JFrame {
         endTime = System.nanoTime();
         duration = (endTime - startTime);
         logResult("Heap Sort", duration);
-        if (duration < bestAlgoDuration) { bestAlgoDuration = duration; bestAlgoName = "Heap Sort"; }
+        if (duration < bestAlgoDuration) {
+            bestAlgoDuration = duration;
+            bestAlgoName = "Heap Sort";
+        }
 
         // --- Final Result ---
         resultArea.append("--------------------------------------------------\n");
